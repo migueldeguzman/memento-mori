@@ -1,0 +1,154 @@
+:root {
+  --bg: #0d0d0f;
+  --bg-tile: #151518;
+  --ink: #e8e4da;
+  --ink-dim: #9a958a;
+  --ink-faint: #5c5850;
+  --accent: #c9a86a;
+  --border: #26262b;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --mono: "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  min-height: 100%;
+}
+
+.page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 56px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* Masthead */
+.masthead { text-align: center; }
+.masthead-latin {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+.masthead-title {
+  font-weight: 400;
+  font-size: clamp(26px, 4.5vw, 40px);
+  line-height: 1.25;
+}
+.masthead-sub { color: var(--ink-dim); font-style: italic; }
+
+/* Counters */
+.counters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.counter-tile {
+  background: var(--bg-tile);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 26px 20px 22px;
+  text-align: center;
+}
+.counter-value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(26px, 3.4vw, 34px);
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.counter-label {
+  font-size: 14px;
+  color: var(--ink-dim);
+  line-height: 1.45;
+}
+
+/* Quote */
+.quote-block {
+  text-align: center;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 42px 12px;
+}
+.quote-kicker {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 22px;
+}
+.quote-text {
+  font-size: clamp(20px, 3vw, 28px);
+  line-height: 1.5;
+  font-style: italic;
+  max-width: 46ch;
+  margin: 0 auto 22px;
+}
+.quote-text::before { content: "\201C"; color: var(--accent); }
+.quote-text::after { content: "\201D"; color: var(--accent); }
+.quote-author { color: var(--accent); font-size: 16px; }
+.quote-source { color: var(--ink-faint); font-style: italic; }
+.quote-source::before { content: " \00B7 "; }
+
+/* Actions */
+.actions { text-align: center; }
+.btn-float {
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--bg);
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  padding: 13px 26px;
+  cursor: pointer;
+}
+.btn-float:hover { filter: brightness(1.1); }
+.float-hint {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+/* Footer */
+.footnote {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.footnote a { color: var(--ink-dim); }
+
+/* Mini mode: used inside the floating window (PiP or popup) */
+body.mini { overflow: hidden; }
+body.mini .page {
+  padding: 14px 16px;
+  gap: 10px;
+  max-width: none;
+  height: 100vh;
+  justify-content: center;
+}
+body.mini .masthead-title,
+body.mini .counters .counter-tile:not(:first-child),
+body.mini .quote-kicker,
+body.mini .actions,
+body.mini .footnote { display: none; }
+body.mini .masthead-latin { font-size: 10px; margin-bottom: 0; }
+body.mini .counters { grid-template-columns: 1fr; gap: 0; }
+body.mini .counter-tile { padding: 10px 8px 8px; border: none; background: none; }
+body.mini .counter-value { font-size: 24px; margin-bottom: 4px; }
+body.mini .counter-label { font-size: 11px; }
+body.mini .quote-block { border: none; padding: 6px 4px 10px; }
+body.mini .quote-text { font-size: 13px; line-height: 1.45; margin-bottom: 8px; }
+body.mini .quote-author { font-size: 11px; }

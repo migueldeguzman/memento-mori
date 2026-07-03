@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memento Mori - Live</title>
+  <meta name="description" content="A live counter of human mortality and a daily Stoic quote. Remember death, so you remember to live.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128337;</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="page">
+    <header class="masthead">
+      <p class="masthead-latin">MEMENTO MORI</p>
+      <h1 class="masthead-title">Remember that you will die.<br><span class="masthead-sub">So remember to live.</span></h1>
+    </header>
+
+    <section class="counters" aria-label="Live mortality counters">
+      <div class="counter-tile">
+        <p class="counter-value" id="count-page">0</p>
+        <p class="counter-label">people have died since you opened this page</p>
+      </div>
+      <div class="counter-tile">
+        <p class="counter-value" id="count-today">0</p>
+        <p class="counter-label">people have died today</p>
+      </div>
+      <div class="counter-tile">
+        <p class="counter-value" id="count-year">0</p>
+        <p class="counter-label">people have died this year</p>
+      </div>
+    </section>
+
+    <section class="quote-block" aria-label="Stoic quote of the day">
+      <p class="quote-kicker" id="quote-date">Quote for today</p>
+      <blockquote class="quote-text" id="quote-text">&nbsp;</blockquote>
+      <p class="quote-author"><span id="quote-author"></span><span class="quote-source" id="quote-source"></span></p>
+    </section>
+
+    <section class="actions">
+      <button class="btn-float" id="btn-float" title="Shrink into a small always-on-top window you can keep beside your work">
+        Keep as floating reminder
+      </button>
+      <p class="float-hint" id="float-hint">Opens a small resizable window that stays on top while you work.</p>
+    </section>
+
+    <footer class="footnote">
+      <p>
+        Counters are estimates extrapolated from the UN World Population Prospects global death rate
+        (about 62 million deaths per year, roughly 1.9 lives every second).
+        They are a meditation, not a measurement.
+      </p>
+      <p>
+        One quote per day from <span id="quote-count">548</span> Stoic passages.
+        <a href="https://github.com/migueldeguzman/memento-mori" rel="noopener">Open source on GitHub</a>.
+      </p>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
