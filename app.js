@@ -11,6 +11,8 @@ const DEATHS_PER_MS = DEATHS_PER_YEAR / (SECONDS_PER_YEAR * 1000);
 const pageOpenedAt = Date.now();
 const fmt = new Intl.NumberFormat("en-US");
 
+let quotes = [];
+
 const isMini = new URLSearchParams(location.search).has("mini");
 if (isMini) document.body.classList.add("mini");
 
@@ -25,45 +27,38 @@ function startOfYear() {
 }
 
 function dayOfYear() {
-  const now = new Date();
-  return Math.floor((now.getTime() - startOfYear()) / 86_400_000);
+  return Math.floor((Date.now() - startOfYear()) / 86_400_000);
 }
 
-function tick() {
-  const now = Date.now();
-  setText("count-page", fmt.format(Math.floor((now - pageOpenedAt) * DEATHS_PER_MS)));
-  setText("count-today", fmt.format(Math.floor((now - startOfToday()) * DEATHS_PER_MS)));
-  setText("count-year", fmt.format(Math.floor((now - startOfYear()) * DEATHS_PER_MS)));
-}
-
-function setText(id, value) {
-  const el = document.getElementById(id);
+function setText(doc, id, value) {
+  const el = doc.getElementById(id);
   if (el && el.textContent !== value) el.textContent = value;
 }
 
-let quoteDayShown = -1;
+/* Renders counters AND the daily quote into any document
+ * (the main page, or the floating PiP window's cloned document),
+ * so every open view stays correct across midnight. */
+function render(doc) {
+  const now = Date.now();
+  setText(doc, "count-page", fmt.format(Math.floor((now - pageOpenedAt) * DEATHS_PER_MS)));
+  setText(doc, "count-today", fmt.format(Math.floor((now - startOfToday()) * DEATHS_PER_MS)));
+  setText(doc, "count-year", fmt.format(Math.floor((now - startOfYear()) * DEATHS_PER_MS)));
+
+  if (quotes.length === 0) return;
+  const q = quotes[dayOfYear() % quotes.length];
+  setText(doc, "quote-text", q.text);
+  setText(doc, "quote-author", q.author);
+  setText(doc, "quote-source", q.source);
+  setText(doc, "quote-count", String(quotes.length));
+  setText(doc, "quote-date", new Date().toLocaleDateString("en-US", {
+    weekday: "long", month: "long", day: "numeric", year: "numeric"
+  }));
+}
 
 async function loadQuotes() {
   const res = await fetch("quotes.json");
   const data = await res.json();
-  return data.quotes;
-}
-
-function showDailyQuote(quotes) {
-  const day = dayOfYear();
-  if (day === quoteDayShown) return;
-  quoteDayShown = day;
-  const q = quotes[day % quotes.length];
-  setText("quote-text", q.text);
-  setText("quote-author", q.author);
-  setText("quote-source", q.source);
-  setText("quote-count", String(quotes.length));
-  const dateEl = document.getElementById("quote-date");
-  if (dateEl) {
-    dateEl.textContent = new Date().toLocaleDateString("en-US", {
-      weekday: "long", month: "long", day: "numeric", year: "numeric"
-    });
-  }
+  quotes = data.quotes;
 }
 
 /* Floating reminder window.
@@ -85,16 +80,7 @@ async function openFloatingReminder() {
       }
       pip.document.body.classList.add("mini");
       pip.document.body.innerHTML = document.getElementById("page").outerHTML;
-      const interval = setInterval(() => {
-        const now = Date.now();
-        const write = (id, v) => {
-          const el = pip.document.getElementById(id);
-          if (el) el.textContent = v;
-        };
-        write("count-page", fmt.format(Math.floor((now - pageOpenedAt) * DEATHS_PER_MS)));
-        write("count-today", fmt.format(Math.floor((now - startOfToday()) * DEATHS_PER_MS)));
-        write("count-year", fmt.format(Math.floor((now - startOfYear()) * DEATHS_PER_MS)));
-      }, 250);
+      const interval = setInterval(() => render(pip.document), 250);
       pip.addEventListener("pagehide", () => clearInterval(interval));
       return;
     } catch { /* fall through to popup */ }
@@ -109,11 +95,10 @@ async function openFloatingReminder() {
 }
 
 async function main() {
-  tick();
-  setInterval(tick, 250);
-  const quotes = await loadQuotes();
-  showDailyQuote(quotes);
-  setInterval(() => showDailyQuote(quotes), 60_000);
+  render(document);
+  setInterval(() => render(document), 250);
+  await loadQuotes();
+  render(document);
 
   const btn = document.getElementById("btn-float");
   if (btn) {
